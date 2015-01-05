@@ -1,0 +1,137 @@
+package dougs.fourwdtyres;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.preference.PreferenceManager;
+import android.util.Log;
+
+public class Handler extends SQLiteOpenHelper {
+	
+	private static final String DEBUG_TAG= "DOUGIOS";
+
+	private static final int DATABASE_VERSION = 1;
+	private static final String DATABASE_NAME = "dougstyres.db";
+	private static final String TABLE_PRODUCTS = "products";
+	private static final String TABLE_USERS = "users";
+
+	private static final String COLUMN_ID = "id";
+	private static final String COLUMN_TYPE = "type";
+	private static final String COLUMN_SIZE = "size";
+	private static final String COLUMN_NAME = "name";
+	
+//	private static final String COLUMN_USERID = "userid";
+	private static final String COLUMN_USER = "usernames";
+	private static final String COLUMN_USEREMAIL = "email";
+	
+	
+	public Handler(Context context, String name, CursorFactory factory, int version) {
+		super(context, DATABASE_NAME, factory, DATABASE_VERSION);
+	
+	}
+	
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+		this.onCreate(db);
+	}
+	
+
+
+	public void onCreate(SQLiteDatabase db) {
+		
+		String CREATE_PRODUCTS_TABLE = "CREATE TABLE products ( " +
+				"id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+				"type TEXT," +
+				"size TEXT," +
+				"name TEXT )";		
+		
+		String CREATE_USERS_TABLE = "CREATE TABLE users ( " +
+				"usernames TEXT," +
+				"email TEXT )";
+		
+		db.execSQL(CREATE_PRODUCTS_TABLE);
+		db.execSQL(CREATE_USERS_TABLE);
+	//	db.execSQL("INSERT INTO products VALUES('Mud Terrain', '31', 'Maxxis')");
+		
+		db.execSQL("INSERT INTO " + TABLE_PRODUCTS + " VALUES ('1', 'Mud Terrain', '31', 'Maxxis');"); 
+		db.execSQL("INSERT INTO " + TABLE_PRODUCTS + " VALUES ('2', 'Highway Terrain', '31', 'Cooper');"); 
+		db.execSQL("INSERT INTO " + TABLE_PRODUCTS + " VALUES ('3', 'All Terrain', '31', 'BF Goodrich');"); 
+		
+		db.execSQL("INSERT INTO " + TABLE_PRODUCTS + " VALUES ('4', 'Mud Terrain', '33', 'Treppidor');"); 
+		db.execSQL("INSERT INTO " + TABLE_PRODUCTS + " VALUES ('5', 'Highway Terrain', '33', 'Maxxis');"); 
+		db.execSQL("INSERT INTO " + TABLE_PRODUCTS + " VALUES ('6', 'All Terrain', '33', 'Mickey Thompson');"); 
+		
+		db.execSQL("INSERT INTO " + TABLE_PRODUCTS + " VALUES ('7', 'Mud Terrain', '35', 'Symex');"); 
+		db.execSQL("INSERT INTO " + TABLE_PRODUCTS + " VALUES ('8', 'Highway Terrain', '35', 'BF Goodrich');"); 
+		db.execSQL("INSERT INTO " + TABLE_PRODUCTS + " VALUES ('9', 'All Terrain', '35', 'Maxxis');"); 
+		
+
+	}
+	
+
+	
+
+	public Tyres findProduct(String type, String size){
+
+			String query = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE " + COLUMN_TYPE + " = \"" + type + " AND " + COLUMN_SIZE + " = \"" + size; // + "\""
+			
+			SQLiteDatabase db = this.getWritableDatabase();
+			
+			Cursor cursor = db.rawQuery(query, null);
+		
+			Tyres product = new Tyres();
+
+			if (cursor.moveToFirst()){
+				try {
+	//			cursor.moveToFirst();
+				product.setID(Integer.parseInt(cursor.getString(0)));
+				product.setName(cursor.getString(1));
+				product.setType(cursor.getString(2));
+				product.setSize(cursor.getString(3));
+				cursor.close();
+				} catch (Exception e) {
+					Log.e(DEBUG_TAG, "A FUCK UP", e);
+					e.printStackTrace();
+				}
+			} else {
+				product = null;
+			}
+			db.close();
+			return product;
+		
+			
+	
+		}
+	
+	
+	public void addUser(Users user){
+		
+		SQLiteDatabase db = this.getWritableDatabase();
+		
+		ContentValues values = new ContentValues();
+		values.put(COLUMN_USER, user.getName());
+		values.put(COLUMN_USEREMAIL, user.getEmail());
+		
+		
+		
+		db.insert(TABLE_USERS, null, values);
+		db.close();
+	}
+
+
+
+
+	
+
+
+
+
+
+
+}

@@ -1,0 +1,72 @@
+package dougs.fourwdtyres;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+public class Results extends Activity {
+	
+	@SuppressWarnings("unused")
+	private static final String DEBUG_TAG= "DOUGIOS";
+	
+	ImageView image;
+	 static TextView tname;
+	 static TextView tsize;
+	 static TextView ttype;
+	
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_results);
+		
+		image = (ImageView)findViewById(R.id.pic);
+		tname = (TextView)findViewById(R.id.ttName);
+		tsize = (TextView)findViewById(R.id.ttSize);
+		ttype = (TextView)findViewById(R.id.tttType);
+		
+		findProduct();
+	
+	}
+	
+	public static void findProduct () {	
+		Handler dbhandler = new Handler( null, null, null, 1, null);
+		
+		Tyres product = dbhandler.lookupProduct(MainActivity.getSelectedItem(ttype).toString());
+		
+		if (product != null) {
+			tname.setText(String.valueOf(product.getName()));
+			tsize.setText(String.valueOf(product.getSize()));
+			ttype.setText(String.valueOf(product.getType()));
+		} else {
+			tname.setText("Sorry");
+		}
+	}
+		
+//		Handler dbHandler = new Handler(null, null, null, 1, null);
+//		
+//		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(null);
+//		String ttttType = sharedPref.getString("key1", "");
+//		String ttttSize = sharedPref.getString("key2", "");
+//		
+//		Tyres results1 = dbHandler.findProduct(ttttType.toString());
+//		Tyres results2 = dbHandler.findProduct(ttttSize.toString());
+//		
+//		try {
+//			if ((results1 != null) && (results2 != null)){
+//			
+//				tname.setText(String.valueOf(results1.getName().toString()));
+//				tsize.setText(String.valueOf(results2.getSize()));
+//				ttype.setText(String.valueOf(results1.getType().toString()));
+//		
+//			} else if (results1 == null){
+//				//Toast.makeText(getBaseContext(), " No Match Found! ", Toast.LENGTH_SHORT).show();
+//				Log.e(DEBUG_TAG, "A FUCK UP");
+//			}
+//		} catch (Exception e) {
+//			Log.e(DEBUG_TAG, "A FUCK UP", e);
+//			e.printStackTrace();
+//		}
+	
+//	}	
+}
